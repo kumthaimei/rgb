@@ -46,7 +46,7 @@ void sendHTML(WiFiClient& c) {
     // Send the chosen state to /set
     function setLed() {
       const [r,g,b] = cks.map(cb => cb.checked ? 1 : 0);
-      fetch(`http:192.168.227.84/set?R=${r}&G=${g}&B=${b}`)
+      fetch(`http://192.168.227.84/set?R=${r}&G=${g}&B=${b}`)
         .catch(err => console.error('Fetch error:', err));
     }
 
