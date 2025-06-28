@@ -1,55 +1,60 @@
+/* ---------- HTML page ---------- */
+void sendHTML(WiFiClient& c) {
+  c.println(
+    "HTTP/1.1 200 OK\r\n"
+    "Content-Type: text/html\r\n"
+    "Connection: close\r\n"
+  );
+
+  c.println(R"html(
 <!DOCTYPE html>
 <html>
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>ESP32 RGB LED</title>
   <style>
-    body   {font-family: Arial, sans-serif; text-align: center;
-            margin: 0; padding: 20px; background: #111; color: #fff;}
-    label  {display: inline-block; width: 80px; margin: 6px;}
-    input[type=checkbox] {transform: scale(1.4); margin-left: 6px;}
-    #sample{width: 90px; height: 90px; margin: 20px auto;
-            border-radius: 10px; border: 2px solid #555;}
-    button {margin: 12px; padding: 8px 20px; border: none;
-            border-radius: 8px; cursor: pointer;}
+    body{font-family:Arial;background:#111;color:#fff;text-align:center;padding:20px}
+    label{display:inline-block;width:80px;margin:6px}
+    input[type=checkbox]{transform:scale(1.4);margin-left:6px}
+    #sample{width:90px;height:90px;margin:20px auto;border-radius:10px;border:2px solid #555}
+    button{margin:12px;padding:8px 20px;border:none;border-radius:8px;cursor:pointer}
+    a{color:#0af}
   </style>
 </head>
-
 <body>
   <h2>RGB LED – ON/OFF</h2>
-
-  <!-- Live colour preview -->
   <div id="sample"></div>
 
-  <!-- Checkbox controls -->
   <label>R <input type="checkbox" id="r"></label>
   <label>G <input type="checkbox" id="g"></label>
   <label>B <input type="checkbox" id="b"></label><br>
 
-  <button onclick="send()">Set LED</button>
+  <button onclick="setLed()">Set LED</button>
   <p><a href="/blink">Run blink test</a></p>
 
   <script>
-    /* Grab DOM elements */
+    // Checkbox references
     const cks = ['r','g','b'].map(id => document.getElementById(id));
-    const previewBox = document.getElementById('sample');
 
-    /* Live preview when toggling boxes */
-    cks.forEach(c => c.onchange = updatePreview);
-    function updatePreview () {
-      const col = cks.map(c => c.checked ? 255 : 0);
-      previewBox.style.background = `rgb(${col})`;
+    // Live colour preview in the square
+    cks.forEach(cb => cb.onchange = preview);
+    function preview() {
+      const col = cks.map(cb => cb.checked ? 255 : 0);
+      sample.style.background = `rgb(${col})`;
     }
 
-    /* Send GET /set?R=…&G=…&B=… to ESP32 */
-    function send () {
-      const [r,g,b] = cks.map(c => c.checked ? 1 : 0);
-      
-      fetch(`http://192.168.227.84/set?R=${r}&G=${g}&B=${b}`).catch(console.error);
+    // Send the chosen state to /set
+    function setLed() {
+      const [r,g,b] = cks.map(cb => cb.checked ? 1 : 0);
+      fetch(`http:192.168.227.84/set?R=${r}&G=${g}&B=${b}`)
+        .catch(err => console.error('Fetch error:', err));
     }
 
-    updatePreview();   // draw initial state
+    preview();   // initialise preview on first load
   </script>
 </body>
 </html>
+)html");
+}
+
 
