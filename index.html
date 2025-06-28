@@ -44,7 +44,8 @@
     /* send GET /set?R=1&G=0&B=1 to ESP32 */
     function send () {
       const [r,g,b] = cks.map(c => c.checked ? 1 : 0);
-      fetch(`/set?R=${r}&G=${g}&B=${b}`).catch(console.error);
+     fetch('http://192.168.227.141/set?R='+r+'&G='+g+'&B='+b)
+
     }
 
     update();   // draw initial preview
