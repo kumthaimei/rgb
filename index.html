@@ -45,7 +45,7 @@
     function send () {
       const [r,g,b] = cks.map(c => c.checked ? 1 : 0);
       
-      fetch(`http://192.168.227.141/set?R=${r}&G=${g}&B=${b}`).catch(console.error);
+      fetch(`http://192.168.227.84/set?R=${r}&G=${g}&B=${b}`).catch(console.error);
     }
 
     updatePreview();   // draw initial state
