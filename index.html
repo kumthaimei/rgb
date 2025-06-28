@@ -1,54 +1,54 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>ESP32 RGB LED — ON / OFF</title>
-
-<style>
-  body   {font-family: Arial, sans-serif; text-align: center;
-          margin: 0; padding: 20px; background: #111; color: #fff;}
-  label  {display: inline-block; width: 75px; margin: 6px 0;}
-  input[type=checkbox] {transform: scale(1.4); margin-left: 8px;}
-  #sample{width: 90px; height: 90px; margin: 22px auto;
-          border-radius: 12px; border: 2px solid #555;}
-  button {margin-top: 16px; padding: 8px 20px; font-size: 15px;
-          border: none; border-radius: 8px; cursor: pointer;}
-</style>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ESP32 RGB LED</title>
+  <style>
+    body   {font-family: Arial, sans-serif; text-align: center;
+            margin: 0; padding: 20px; background: #111; color: #fff;}
+    label  {display: inline-block; width: 80px; margin: 6px;}
+    input[type=checkbox] {transform: scale(1.4); margin-left: 6px;}
+    #sample{width: 90px; height: 90px; margin: 20px auto;
+            border-radius: 10px; border: 2px solid #555;}
+    button {margin: 12px; padding: 8px 20px; border: none;
+            border-radius: 8px; cursor: pointer;}
+  </style>
 </head>
 
 <body>
-  <h2>ESP32 RGB LED — ON / OFF</h2>
+  <h2>RGB LED – ON/OFF</h2>
 
-  <!-- live colour preview square -->
+  <!-- Live colour preview -->
   <div id="sample"></div>
 
-  <!-- checkbox controls -->
+  <!-- Checkbox controls -->
   <label>R <input type="checkbox" id="r"></label>
   <label>G <input type="checkbox" id="g"></label>
-  <label>B <input type="checkbox" id="b"></label><br />
+  <label>B <input type="checkbox" id="b"></label><br>
 
-  <button onclick="send()">Set&nbsp;LED</button>
+  <button onclick="send()">Set LED</button>
+  <p><a href="/blink">Run blink test</a></p>
 
   <script>
-    /* -- grab DOM elements -- */
+    /* Grab DOM elements */
     const cks = ['r','g','b'].map(id => document.getElementById(id));
-    const box = document.getElementById('sample');
+    const previewBox = document.getElementById('sample');
 
-    /* update preview square whenever a box is toggled */
-    cks.forEach(c => c.onchange = update);
-    function update () {
-      const [r,g,b] = cks.map(c => c.checked ? 255 : 0);
-      box.style.background = `rgb(${r},${g},${b})`;
+    /* Live preview when toggling boxes */
+    cks.forEach(c => c.onchange = updatePreview);
+    function updatePreview () {
+      const col = cks.map(c => c.checked ? 255 : 0);
+      previewBox.style.background = `rgb(${col})`;
     }
 
-    /* send GET /set?R=1&G=0&B=1 to ESP32 */
+    /* Send GET /set?R=…&G=…&B=… to ESP32 */
     function send () {
       const [r,g,b] = cks.map(c => c.checked ? 1 : 0);
-     fetch('http://192.168.227.141/set?R='+r+'&G='+g+'&B='+b)
-
+      const esp = 'http://192.168.227.141';
+      fetch(`${location.origin}/set?R=${r}&G=${g}&B=${b}`).catch(console.error);
     }
 
-    update();   // draw initial preview
+    updatePreview();   // draw initial state
   </script>
 </body>
 </html>
