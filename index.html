@@ -2,48 +2,53 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>ESP32 RGB LED</title>
+<title>ESP32 RGB LED — ON / OFF</title>
+
 <style>
   body   {font-family: Arial, sans-serif; text-align: center;
           margin: 0; padding: 20px; background: #111; color: #fff;}
-  .slider{width: 90%;}
-  #sample{width: 80px; height: 80px; margin: 20px auto;
+  label  {display: inline-block; width: 75px; margin: 6px 0;}
+  input[type=checkbox] {transform: scale(1.4); margin-left: 8px;}
+  #sample{width: 90px; height: 90px; margin: 22px auto;
           border-radius: 12px; border: 2px solid #555;}
-  button {padding: 6px 14px; font-size: 14px;
-          border: none; border-radius: 6px; cursor: pointer;}
+  button {margin-top: 16px; padding: 8px 20px; font-size: 15px;
+          border: none; border-radius: 8px; cursor: pointer;}
 </style>
 </head>
 
 <body>
-  <h2>ESP32 RGB LED Controller</h2>
+  <h2>ESP32 RGB LED — ON / OFF</h2>
 
-  <!-- live preview square -->
+  <!-- live colour preview square -->
   <div id="sample"></div>
 
-  <!-- colour sliders -->
-  <label>R <input type="range" min="0" max="255" id="r" class="slider"></label><br />
-  <label>G <input type="range" min="0" max="255" id="g" class="slider"></label><br />
-  <label>B <input type="range" min="0" max="255" id="b" class="slider"></label><br /><br />
+  <!-- checkbox controls -->
+  <label>R <input type="checkbox" id="r"></label>
+  <label>G <input type="checkbox" id="g"></label>
+  <label>B <input type="checkbox" id="b"></label><br />
 
-  <button onclick="send()">Set Colour</button>
+  <button onclick="send()">Set&nbsp;LED</button>
 
   <script>
-    /* ---------- UI helpers ---------- */
-    const sliders = ['r','g','b'].map(id => document.getElementById(id));
-    sliders.forEach(s => s.oninput = updateSample);
+    /* -- grab DOM elements -- */
+    const cks = ['r','g','b'].map(id => document.getElementById(id));
+    const box = document.getElementById('sample');
 
-    function updateSample () {
-      const [r,g,b] = sliders.map(s => +s.value);
-      sample.style.background = `rgb(${r},${g},${b})`;
+    /* update preview square whenever a box is toggled */
+    cks.forEach(c => c.onchange = update);
+    function update () {
+      const [r,g,b] = cks.map(c => c.checked ? 255 : 0);
+      box.style.background = `rgb(${r},${g},${b})`;
     }
 
-    /* ---------- Send RGB to ESP32 ---------- */
+    /* send GET /set?R=1&G=0&B=1 to ESP32 */
     function send () {
-      const [r,g,b] = sliders.map(s => +s.value);
+      const [r,g,b] = cks.map(c => c.checked ? 1 : 0);
       fetch(`/set?R=${r}&G=${g}&B=${b}`).catch(console.error);
     }
 
-    updateSample();   // draw initial preview square
+    update();   // draw initial preview
   </script>
 </body>
 </html>
+
