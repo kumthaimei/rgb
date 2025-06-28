@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RGB LED Control</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 30px;
+            background-color: #f4f4f4;
+        }
+        h2 {
+            color: #333;
+        }
+        .slider-container {
+            margin: 10px 0;
+        }
+        .slider {
+            width: 80%;
+        }
+        .button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>RGB LED Control</h2>
+
+    <div class="slider-container">
+        <label for="r">Red:</label>
+        <input type="range" id="r" class="slider" min="0" max="255" value="128">
+        <span id="rValue">128</span>
+    </div>
+    
+    <div class="slider-container">
+        <label for="g">Green:</label>
+        <input type="range" id="g" class="slider" min="0" max="255" value="128">
+        <span id="gValue">128</span>
+    </div>
+
+    <div class="slider-container">
+        <label for="b">Blue:</label>
+        <input type="range" id="b" class="slider" min="0" max="255" value="128">
+        <span id="bValue">128</span>
+    </div>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>RGB LED Controller</title>
+<style>
+  body{font-family:system-ui;padding:20px;text-align:center;background:#111;color:#eee}
+  input[type=range]{width:80%}
+  label{display:block;margin-top:1.4rem;font-weight:600}
+  #ip{width:230px}
+</style>
+</head>
+<body>
+<h2>ESP32 RGB LED Controller</h2>
+
+<p>ESP32 IP: <input id="ip" placeholder="e.g. 192.168.1.53" /></p>
+
+<label>Red <input type="range" id="r" min="0" max="255" value="0"></label>
+<label>Green <input type="range" id="g" min="0" max="255" value="0"></label>
+<label>Blue <input type="range" id="b" min="0" max="255" value="0"></label>
+
+<script>
+const sliders = ["r","g","b"].map(id=>document.getElementById(id));
+const ipBox  = document.getElementById("ip");
+
+sliders.forEach(sl=>{
+  sl.addEventListener("input", () => {
+    const ip = ipBox.value.trim();
+    if(!ip) return;  // no IP entered yet
+    const query = `r=${sliders[0].value}&g=${sliders[1].value}&b=${sliders[2].value}`;
+    fetch(`http://${ip}/set?${query}`).catch(console.warn);
+  });
+});
+</script>
+</body>
+</html>
